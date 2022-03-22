@@ -1,3 +1,7 @@
+import argparse
+import comtypes
+import json
+
 from pycaw.pycaw import (
     AudioUtilities,
     IMMDeviceEnumerator,
@@ -8,10 +12,7 @@ from pycaw.pycaw import (
     PROPERTYKEY,
     GUID
 )
-import argparse
-import json
-
-import comtypes
+from sys import exit
 
 def set_program_volume(program_name, program_volume):
     sessions = AudioUtilities.GetAllSessions()
