@@ -1,0 +1,67 @@
+{
+  "name": "comms-app",
+  "version": "0.1.0",
+  "main": "public/electron.js",
+  "private": true,
+  "homepage": "./",
+  "dependencies": {
+    "@emotion/styled": "^11.8.1",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "child_process": "^1.0.2",
+    "electron-is-dev": "^2.0.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "5.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "npm run build-cli && npm run start-app",
+    "start-react": "react-scripts start",
+    "start-electron": "wait-on tcp:3000 && electron .",
+    "start-app": "concurrently -k \"npm run start-react\" \"npm run start-electron\"",
+    "build-app": "react-scripts build",
+    "build-cli": "pyinstaller -F -n volume_control -p ..\\venv\\Lib\\site-packages\\ --distpath .\\public ..\\volume_control\\__main__.py",
+    "build": "npm run build-cli && electron-builder build --win -c.extraMetadata.main=build/electron.js --publish never",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "build": {
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "publish": {
+      "provider": "github",
+      "repo": "comms",
+      "owner": "Ross-Alexandra"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "electron": "^17.1.2",
+    "electron-builder": "^22.14.13",
+    "wait-on": "^6.0.1"
+  }
+}
