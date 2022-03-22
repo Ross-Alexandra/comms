@@ -4,23 +4,15 @@ import {
     DeviceProgramSelectors
 } from './elements';
 
-import { getPrograms } from "../../public/commandStrings";
 import { useAsyncData } from "../hooks";
-const { ipcRenderer } = window.require('electron');
 
 export default function DevicePage({deviceList}) {
     const [selectedDevice, setSelectedDevice] = useState(0);
-    
-    const getProgramsCallback = useCallback(async () => {
-        return await ipcRenderer.invoke('runCommand', {
-            commandString: getPrograms,
-            device: deviceList[selectedDevice]
-        });
-    }, [deviceList, selectedDevice]);
+    const {data: programList, state: programListState} = useAsyncData(useCallback(async () => {
+        return await window.api.getPrograms(deviceList[selectedDevice]);
+    }, [deviceList, selectedDevice]));
 
-    const {data: programList, state: programListState} = useAsyncData(getProgramsCallback);
     const [selectedProgram, setSelectedProgram] = useState(0);
-    console.log('render');
     return (
         <DevicePageWrapper>
             <DeviceProgramSelectors>
