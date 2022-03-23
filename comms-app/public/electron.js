@@ -1,7 +1,13 @@
 const path = require('path');
-
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
+const Store = require('electron-store');
+const store = new Store();
+
+const {
+    getSelectedPrograms,
+    setSelectedPrograms
+} = require('./electron_command_strings');
 const {getDevices, getPrograms} = require('./volume_control');
 
 ipcMain.handle('runCommand', async (event, args) => {
@@ -10,6 +16,10 @@ ipcMain.handle('runCommand', async (event, args) => {
             return {data: await getDevices()};
         case getPrograms.commandString:
             return {data: await getPrograms(args.device)}
+        case getSelectedPrograms:
+            return {data: store.get('selectedPrograms') ?? []}
+        case setSelectedPrograms:
+            return {data: store.set('selectedPrograms', args.selectedPrograms)};
         default:
             return {data: null};
     }

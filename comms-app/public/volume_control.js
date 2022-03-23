@@ -1,6 +1,11 @@
 
 const path = require('path');
 const child = require('child_process').execFile;
+const {
+    getDevices: getDevicesCommandString,
+    getPrograms: getProgramsCommandString
+} = require('./electron_command_strings.js');
+
 const changeVolumeExeLoc = path.join(__dirname, 'volume_control.exe');
 
 async function getDevices() {
@@ -14,7 +19,7 @@ async function getDevices() {
         });
     });
 }
-getDevices.commandString = 'getDevices';
+getDevices.commandString = getDevicesCommandString;
 
 async function getPrograms(device) {
     const getProgramsParameters = ['-a', ...(device ? ['-d', device] : [])];
@@ -27,7 +32,7 @@ async function getPrograms(device) {
         });
     });
 }
-getPrograms.commandString = 'getPrograms';
+getPrograms.commandString = getProgramsCommandString;
 
 module.exports = {
     getDevices,
