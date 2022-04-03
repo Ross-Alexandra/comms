@@ -44,14 +44,10 @@ export const Reducer = (state, action) => {
         case StateActions.updateProgramList: {
             const programListsUpdate = [...state.programLists];
             programListsUpdate[action.index] = action.programList;
-
-            const selectedProgramsUpdate = [...state.selectedPrograms];
-            selectedProgramsUpdate[action.index] = 0;
             
             return {
                 ...state,
                 programLists: programListsUpdate,
-                selectedPrograms: selectedProgramsUpdate,
             };
         }
         case StateActions.updateSelectedDevice: {

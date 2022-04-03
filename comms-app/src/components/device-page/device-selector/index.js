@@ -4,7 +4,7 @@ import { DeviceInput } from "./elements";
 
 export default function DeviceSelector({pageIndex}) {
 
-    const {deviceList, selectedDevices, updateSelectedDevice} = useContext(AppStateContext);
+    const {deviceList, selectedDevices, updateSelectedDevice, updateSelectedProgram} = useContext(AppStateContext);
     const [deviceIndex, setDeviceIndex] = useState(selectedDevices?.[pageIndex] ?? 0);
 
     return (
@@ -14,6 +14,7 @@ export default function DeviceSelector({pageIndex}) {
                 const newDeviceIndex = event.target.value;
                 setDeviceIndex(newDeviceIndex);
                 updateSelectedDevice(pageIndex, newDeviceIndex);
+                updateSelectedProgram(pageIndex, 0);
             }}
         >
             {deviceList.map((device, index) => 

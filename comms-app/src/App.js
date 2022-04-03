@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppDiv } from './elements';
 
 import DevicePage from './components/device-page';
@@ -8,6 +8,7 @@ export default function App() {
     const {
         deviceList,
         selectedDevices,
+        selectedPrograms,
         programLists,
         setDeviceList,
         setProgramLists,
@@ -17,31 +18,23 @@ export default function App() {
         updateSelectedProgram,
         updateProgramList
     } = useContext(AppStateContext);
+    
+    const [initialLoad, setInitialLoad] = useState(true);
 
     // Initial Load to get device list.
     useEffect(() => {
-        async function fetchInitialProgramLists(devices, totalPages) {
-            for (var page = 0; page < totalPages; page++) {
-                const selectedDeviceIndex = 0; // TODO: fetch me :)
-                const selectedProgramIndex = 0; // TODO: fetch me :)
-                updateSelectedDevice(page, selectedDeviceIndex);
-                updateSelectedProgram(page, selectedProgramIndex);
-
-                const {data: programs} = await window.api.getPrograms(devices[selectedDeviceIndex]);
-                updateProgramList(page, programs);
-            }
-        }
-        
         async function fetchDevices() {
             const {data: devices} = await window.api.getDevices();
-            const totalPages = 1 // TODO: Fetch me :)
+            const {data: storedSelectedDevices} = await window.api.getSelectedDevices();
+            const {data: storedSelectedPrograms} = await window.api.getSelectedPrograms();
 
-            setProgramLists(Array(totalPages).fill(['first-load']));
-            setSelectedDevices(Array(totalPages).fill(0));
-            setSelectedPrograms(Array(totalPages).fill(0));
+            setSelectedDevices(storedSelectedDevices);
+            setSelectedPrograms(storedSelectedPrograms);
             setDeviceList(devices);
 
-            await fetchInitialProgramLists(devices, totalPages);
+            // set program lists as an empty [undefined, ...]
+            // array so that the refresher useEffect can pull this data down.
+            setProgramLists(Array(storedSelectedDevices.length).fill(undefined));
         }
 
         // Whenever the event loop gets to it,
@@ -51,8 +44,6 @@ export default function App() {
     }, [setDeviceList, setProgramLists, setSelectedDevices, setSelectedPrograms, updateProgramList, updateSelectedDevice, updateSelectedProgram]);
 
     useEffect(() => {
-        if (programLists === undefined) return;
-
         // Don't use exhaustive dependancies here as the only time
         // that programLists can update is when selectedDevices
         // has been updated. 
@@ -61,6 +52,8 @@ export default function App() {
         // async data.
         // TODO: Reorganize this code to a cleaner flow that doesn't
         //       require an out-of-file side effect.
+
+        if (programLists === undefined) return;
 
         async function fetchPrograms(device, programIndex) {
             const {data: programList} = await window.api.getPrograms(device);
@@ -85,11 +78,25 @@ export default function App() {
         });
     }, [programLists]); //eslint-disable-line react-hooks/exhaustive-deps
 
-    return deviceList !== undefined ? (
+    useEffect(() => {
+        if (selectedDevices && !initialLoad) window.api.setSelectedDevices(selectedDevices);
+    }, [selectedDevices, initialLoad]);
+
+    useEffect(() => {
+        if (selectedPrograms && !initialLoad) window.api.setSelectedPrograms(selectedPrograms);
+    }, [selectedPrograms, initialLoad]);
+
+    // When all program lists are not undefined, then'
+    // the app has finished it's initial load.
+    useEffect(() => {
+        if (initialLoad && deviceList !== undefined && programLists?.every(programList => programList !== undefined)) setInitialLoad(false); 
+    }, [programLists, initialLoad, deviceList]);
+
+    return initialLoad ? (
+        <p>Fetching necessary data, please wait</p>
+    ) : (
         <AppDiv>
             <DevicePage pageIndex={0} />
         </AppDiv>
-    ) : (
-        <p>Fetching Devices...</p>
     );
 }

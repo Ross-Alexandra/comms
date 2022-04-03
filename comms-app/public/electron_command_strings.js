@@ -3,5 +3,7 @@ module.exports = {
     getPrograms: 'getPrograms',
     getSelectedPrograms: 'getSelectedPrograms',
     setSelectedPrograms: 'setSelectedPrograms',
+    getSelectedDevices: 'getSelectedDevices',
+    setSelectedDevices: 'setSelectedDevices',
     setHotkey: 'setHotkey'
 };

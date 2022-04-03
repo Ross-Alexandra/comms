@@ -7,6 +7,8 @@ const store = new Store();
 const {
     getSelectedPrograms,
     setSelectedPrograms,
+    getSelectedDevices,
+    setSelectedDevices,
     setHotkey
 } = require('./electron_command_strings');
 const {getDevices, getPrograms} = require('./volume_control');
@@ -16,11 +18,17 @@ ipcMain.handle('runCommand', async (event, args) => {
         case getDevices.commandString:
             return {data: await getDevices()};
         case getPrograms.commandString:
-            return {data: await getPrograms(args.device)}
+            return {data: await getPrograms(args.device)};
         case getSelectedPrograms:
-            return {data: store.get('selectedPrograms') ?? []}
+            return {data: store.get('selectedPrograms', [0])};
         case setSelectedPrograms:
+            console.log('Setting selectedPrograms to =>', args.selectedPrograms)
             return {data: store.set('selectedPrograms', args.selectedPrograms)};
+        case getSelectedDevices: 
+            return {data: store.get('selectedDevices', [0])};
+        case setSelectedDevices:
+            console.log('Setting selectedDevices to =>', args.selectedDevices);
+            return {data: store.set('selectedDevices', args.selectedDevices)};
         case setHotkey:
             globalShortcut.unregisterAll();
 
