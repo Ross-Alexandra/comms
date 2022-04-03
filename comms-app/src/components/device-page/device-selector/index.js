@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AppStateContext } from "../../../app-state/context";
+import { DeviceInput } from "./elements";
 
 export default function DeviceSelector({pageIndex}) {
 
@@ -7,7 +8,7 @@ export default function DeviceSelector({pageIndex}) {
     const [deviceIndex, setDeviceIndex] = useState(selectedDevices?.[pageIndex] ?? 0);
 
     return (
-        <select
+        <DeviceInput
             value={deviceIndex}
             onChange={event => {
                 const newDeviceIndex = event.target.value;
@@ -18,6 +19,6 @@ export default function DeviceSelector({pageIndex}) {
             {deviceList.map((device, index) => 
                 <option key={device} value={index}>{device}</option>    
             )}
-        </select>
+        </DeviceInput>
     );
 }

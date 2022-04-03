@@ -1,12 +1,13 @@
 const path = require('path');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const store = new Store();
 
 const {
     getSelectedPrograms,
-    setSelectedPrograms
+    setSelectedPrograms,
+    setHotkey
 } = require('./electron_command_strings');
 const {getDevices, getPrograms} = require('./volume_control');
 
@@ -20,6 +21,13 @@ ipcMain.handle('runCommand', async (event, args) => {
             return {data: store.get('selectedPrograms') ?? []}
         case setSelectedPrograms:
             return {data: store.set('selectedPrograms', args.selectedPrograms)};
+        case setHotkey:
+            globalShortcut.unregisterAll();
+
+            console.log(args);
+            globalShortcut.register(args.hotkey, () => {
+                console.log(`${args.hotkey} was pressed!`);
+            });
         default:
             return {data: null};
     }
@@ -61,6 +69,7 @@ app.whenReady().then(createWindow);
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll();
   if (process.platform !== 'darwin') {
     app.quit();
   }

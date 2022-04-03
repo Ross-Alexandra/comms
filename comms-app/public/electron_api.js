@@ -3,7 +3,8 @@ const {
     getDevices,
     getPrograms,
     getSelectedPrograms,
-    setSelectedPrograms
+    setSelectedPrograms,
+    setHotkey
 } = require('./electron_command_strings');
 
 
@@ -20,5 +21,8 @@ contextBridge.exposeInMainWorld('api', {
     },
     setSelectedPrograms: async (selectedPrograms) => {
         return await ipcRenderer.invoke('runCommand', {commandString: setSelectedPrograms, selectedPrograms});
+    },
+    setHotkey: async (hotkey) => {
+        return await ipcRenderer.invoke('runCommand', {commandString: setHotkey, hotkey});
     }
 });
