@@ -26,7 +26,7 @@
     "start-app": "concurrently -k \"npm run start-react\" \"npm run start-electron\"",
     "build-app": "react-scripts build",
     "build-cli": "pyinstaller -F -n volume_control -p ..\\venv\\Lib\\site-packages\\ --distpath .\\public ..\\volume_control\\__main__.py",
-    "build": "npm run build-cli && electron-builder build --win -c.extraMetadata.main=build/electron.js --publish never",
+    "build": "npm run build-cli && npm run build-app && electron-builder build --win -c.extraMetadata.main=build/electron.js --publish never",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

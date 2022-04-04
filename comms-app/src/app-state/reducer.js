@@ -3,6 +3,9 @@ export const initialState = {
     programLists: undefined,
     selectedDevices: undefined,
     selectedPrograms: undefined,
+    hotkey: undefined,
+    defaultSliderValue: undefined,
+    alternateSliderValue: undefined
 };
 
 export const StateActions = {
@@ -12,7 +15,10 @@ export const StateActions = {
     setSelectedPrograms: 'set_selected_program',
     updateProgramList: 'update_program_list',
     updateSelectedDevice: 'update_selected_device',
-    updateSelectedProgram: 'update_selected_program'
+    updateSelectedProgram: 'update_selected_program',
+    setHotkey: 'set_hotkey',
+    updateDefaultSliderValue: 'update_default_slider_value',
+    updateAlternateSliderValue: 'update_alternate_slider_value'
 };
 
 export const Reducer = (state, action) => {
@@ -70,6 +76,24 @@ export const Reducer = (state, action) => {
             return {
                 ...state,
                 selectedPrograms: selectedProgramsUpdate
+            };
+        }
+        case StateActions.setHotkey: {
+            return {
+                ...state,
+                hotkey: action.hotkey
+            };
+        }
+        case StateActions.updateDefaultSliderValue: {
+            return {
+                ...state,
+                defaultSliderValue: action.sliderValue
+            };
+        }
+        case StateActions.updateAlternateSliderValue: {
+            return {
+                ...state,
+                alternateSliderValue: action.sliderValue
             };
         }
         default: 

@@ -6,22 +6,31 @@ import { AppStateContext } from './app-state/context';
 
 export default function App() {
     const {
+        // Data
         deviceList,
         selectedDevices,
         selectedPrograms,
         programLists,
+        hotkey,
+        defaultSliderValue,
+        alternateSliderValue,
+
+        // Setters
         setDeviceList,
         setProgramLists,
         setSelectedDevices,
         setSelectedPrograms,
         updateSelectedDevice,
         updateSelectedProgram,
-        updateProgramList
+        updateProgramList,
+        setHotkey,
+        updateDefaultSliderValue,
+        updateAlternateSliderValue
     } = useContext(AppStateContext);
     
     const [initialLoad, setInitialLoad] = useState(true);
 
-    // Initial Load to get device list.
+    // Fetch all the data from the electron store.
     useEffect(() => {
         async function fetchDevices() {
             const {data: devices} = await window.api.getDevices();
@@ -37,11 +46,25 @@ export default function App() {
             setProgramLists(Array(storedSelectedDevices.length).fill(undefined));
         }
 
+        async function loadHotkey() {
+            const {data: hotkey} = await window.api.getHotkey();
+            setHotkey(hotkey);
+        }
+
+        async function loadSliderValues() {
+            const {data: defaultSliderValue} = await window.api.getDefaultSlider();
+            const {data: alternateSliderValue} = await window.api.getAlternateSlider();
+            updateDefaultSliderValue(defaultSliderValue);
+            updateAlternateSliderValue(alternateSliderValue);
+        }
+
         // Whenever the event loop gets to it,
         // setup the initial data by first fetching
         // the device list.
         fetchDevices();
-    }, [setDeviceList, setProgramLists, setSelectedDevices, setSelectedPrograms, updateProgramList, updateSelectedDevice, updateSelectedProgram]);
+        loadHotkey();
+        loadSliderValues();
+    }, [setDeviceList, setProgramLists, setSelectedDevices, setSelectedPrograms, updateProgramList, updateSelectedDevice, updateSelectedProgram, setHotkey, updateDefaultSliderValue, updateAlternateSliderValue]);
 
     useEffect(() => {
         // Don't use exhaustive dependancies here as the only time
@@ -56,7 +79,7 @@ export default function App() {
         if (programLists === undefined) return;
 
         async function fetchPrograms(device, programIndex) {
-            const {data: programList} = await window.api.getPrograms(device);
+            const {data: programList} = await window.api.getPrograms(device, programIndex);
             const foundNames = [];
             const programListSet = programList.reduce((acc, {name, currentVolume}) => {
                 // O(N^2) search here doesn't matter as a user isn't going to
@@ -86,11 +109,30 @@ export default function App() {
         if (selectedPrograms && !initialLoad) window.api.setSelectedPrograms(selectedPrograms);
     }, [selectedPrograms, initialLoad]);
 
-    // When all program lists are not undefined, then'
-    // the app has finished it's initial load.
     useEffect(() => {
-        if (initialLoad && deviceList !== undefined && programLists?.every(programList => programList !== undefined)) setInitialLoad(false); 
-    }, [programLists, initialLoad, deviceList]);
+        if (hotkey) window.api.setHotkey(hotkey);
+    }, [hotkey]);
+
+    useEffect(() => {
+        if (defaultSliderValue) window.api.setDefaultSlider(defaultSliderValue);
+    }, [defaultSliderValue]);
+
+    useEffect(() => {
+        if (alternateSliderValue) window.api.setAlternateSlider(alternateSliderValue);
+    }, [alternateSliderValue]);
+
+    // When all the day is done loading in, the
+    // program is no longer loading.
+    useEffect(() => {
+        if (
+            initialLoad &&
+            hotkey !== undefined && 
+            deviceList !== undefined &&
+            defaultSliderValue !== undefined &&
+            alternateSliderValue !== undefined &&
+            programLists?.every(programList => programList !== undefined)
+        ) setInitialLoad(false); 
+    }, [programLists, initialLoad, deviceList, defaultSliderValue, alternateSliderValue, hotkey]);
 
     return initialLoad ? (
         <p>Fetching necessary data, please wait</p>

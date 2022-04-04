@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     DevicePageWrapper,
     DeviceProgramSelectors,
@@ -10,14 +10,18 @@ import {
 
 import DeviceSelector from "./device-selector";
 import ProgramSelector from "./program-selector";
+import { AppStateContext } from "../../app-state/context";
 
 export default function DevicePage({pageIndex}) {
+    const {
+        hotkey,
+        setHotkey,
+        defaultSliderValue,
+        alternateSliderValue,
+        updateDefaultSliderValue,
+        updateAlternateSliderValue
+    } = useContext(AppStateContext);
     const [settingHotkey, setSettingHotkey] = useState(false);
-    const [hotkey, setHotkey] = useState();
-
-    useEffect(() => {
-        if (hotkey) window.api.setHotkey(hotkey);
-    }, [hotkey]);
 
     return (
         <DevicePageWrapper>
@@ -38,12 +42,31 @@ export default function DevicePage({pageIndex}) {
                 >[{hotkey ?? 'click & press to set hotkey'}]</HotKeySelector>
                 <LevelSelectorBox>
                     <label>Default</label>
-                    <LevelSelector type="range"></LevelSelector>
+                    <LevelSelector
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        defaultValue={defaultSliderValue}
+                        onChange={event => {
+                            updateDefaultSliderValue(event.target.value)
+                        }}
+                    ></LevelSelector>
                 </LevelSelectorBox>
                 <LevelSelectorBox>
                     <label>When Toggled</label>
-                    <LevelSelector type="range"></LevelSelector>
-                </LevelSelectorBox>            </Tools>
+                    <LevelSelector
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        defaultValue={alternateSliderValue}
+                        onChange={event => {
+                            updateAlternateSliderValue(event.target.value);
+                        }}
+                    ></LevelSelector>
+                </LevelSelectorBox>
+            </Tools>
         </DevicePageWrapper>
     );
 }

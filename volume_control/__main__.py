@@ -21,7 +21,10 @@ def set_program_volume(program_name, program_volume):
         if session.Process is not None and session.SimpleAudioVolume is not None:
             if session.Process.name() == program_name:
                 session.SimpleAudioVolume.SetMasterVolume(program_volume, None)
-                print(f'Updated {session.Process.name()} to {program_volume}')
+                print(json.dumps({
+                    'success': True,
+                    'message': f'Updated {session.Process.name()} to {program_volume}'
+                }))
 
 
 def change_program_volume(program_name, volume_offset):
@@ -34,7 +37,10 @@ def change_program_volume(program_name, volume_offset):
                 print(volume + volume_offset)
                 session.SimpleAudioVolume.SetMasterVolume(volume + volume_offset, None)
 
-                print(f'Updated {session.Process.name()} to {volume + volume_offset}')
+                print(json.dumps({
+                    'success': True,
+                    'message': f'Updated {session.Process.name()} to {volume + volume_offset}'
+                }))
 
 
 def get_all_programs():

@@ -5,5 +5,10 @@ module.exports = {
     setSelectedPrograms: 'setSelectedPrograms',
     getSelectedDevices: 'getSelectedDevices',
     setSelectedDevices: 'setSelectedDevices',
-    setHotkey: 'setHotkey'
+    getHotkey: 'getHotkey',
+    setHotkey: 'setHotkey',
+    getDefaultSlider: 'getDefaultSlider',
+    setDefaultSlider: 'setDefaultSlider',
+    getAlternateSlider: 'getAlternateSlider',
+    setAlternateSlider: 'setAlternateSlider'
 };

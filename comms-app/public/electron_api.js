@@ -6,7 +6,12 @@ const {
     setSelectedPrograms,
     getSelectedDevices,
     setSelectedDevices,
-    setHotkey
+    setHotkey,
+    getHotkey,
+    getDefaultSlider,
+    setDefaultSlider,
+    getAlternateSlider,
+    setAlternateSlider
 } = require('./electron_command_strings');
 
 
@@ -15,8 +20,8 @@ contextBridge.exposeInMainWorld('api', {
     getDevices: async () => {
         return await ipcRenderer.invoke('runCommand', {commandString: getDevices});
     },
-    getPrograms: async (device) => {
-        return await ipcRenderer.invoke('runCommand', {commandString: getPrograms, device});
+    getPrograms: async (device, deviceIndex) => {
+        return await ipcRenderer.invoke('runCommand', {commandString: getPrograms, device, deviceIndex});
     },
     getSelectedPrograms: async () => {
         return await ipcRenderer.invoke('runCommand', {commandString: getSelectedPrograms});
@@ -32,5 +37,20 @@ contextBridge.exposeInMainWorld('api', {
     },
     setHotkey: async (hotkey) => {
         return await ipcRenderer.invoke('runCommand', {commandString: setHotkey, hotkey});
-    }
+    },
+    getHotkey: async () => {
+        return await ipcRenderer.invoke('runCommand', {commandString: getHotkey});
+    },
+    getDefaultSlider: async () => {
+        return await ipcRenderer.invoke('runCommand', {commandString: getDefaultSlider});
+    },
+    setDefaultSlider: async (sliderValue) => {
+        return await ipcRenderer.invoke('runCommand', {commandString: setDefaultSlider, sliderValue});
+    },
+    getAlternateSlider: async () => {
+        return await ipcRenderer.invoke('runCommand', {commandString: getAlternateSlider});
+    },
+    setAlternateSlider: async (sliderValue) => {
+        return await ipcRenderer.invoke('runCommand', {commandString: setAlternateSlider, sliderValue});
+    },
 });

@@ -18,7 +18,10 @@ export function AppStateProvider({children}) {
         setSelectedPrograms: (selectedPrograms) => dispatch({type: StateActions.setSelectedPrograms, selectedPrograms}),
         updateProgramList: (index, programList) => dispatch({type: StateActions.updateProgramList, index, programList}),
         updateSelectedDevice: (index, device) => dispatch({type: StateActions.updateSelectedDevice, index, device}),
-        updateSelectedProgram: (index, program) => dispatch({type: StateActions.updateSelectedProgram, index, program})
+        updateSelectedProgram: (index, program) => dispatch({type: StateActions.updateSelectedProgram, index, program}),
+        updateDefaultSliderValue: (sliderValue) => dispatch({type: StateActions.updateDefaultSliderValue, sliderValue}),
+        updateAlternateSliderValue: (sliderValue) => dispatch({type: StateActions.updateAlternateSliderValue, sliderValue}),
+        setHotkey: (hotkey) => dispatch({type: StateActions.setHotkey, hotkey}),
     }), [dispatch]);
 
     const value = useMemo(() => {
