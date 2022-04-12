@@ -1,4 +1,7 @@
 import argparse
+from asyncio import constants
+from copyreg import constructor
+from os import stat
 import comtypes
 import json
 
@@ -17,31 +20,38 @@ from sys import exit
 def set_program_volume(program_name, program_volume):
     sessions = AudioUtilities.GetAllSessions()
 
+    statuses = []
     for session in sessions:
         if session.Process is not None and session.SimpleAudioVolume is not None:
             if session.Process.name() == program_name:
                 session.SimpleAudioVolume.SetMasterVolume(program_volume, None)
-                print(json.dumps({
+                statuses.append(json.dumps({
                     'success': True,
                     'message': f'Updated {session.Process.name()} to {program_volume}'
                 }))
-
+    
+    print(json.dumps({
+        'statuses': statuses
+    }))
 
 def change_program_volume(program_name, volume_offset):
     sessions = AudioUtilities.GetAllSessions()
 
+    statuses = []
     for session in sessions:
         if session.Process is not None and session.SimpleAudioVolume is not None:
             if session.Process.name() == program_name:
                 volume = session.SimpleAudioVolume.GetMasterVolume()
-                print(volume + volume_offset)
                 session.SimpleAudioVolume.SetMasterVolume(volume + volume_offset, None)
 
-                print(json.dumps({
+                statuses.append(json.dumps({
                     'success': True,
                     'message': f'Updated {session.Process.name()} to {volume + volume_offset}'
                 }))
 
+    print(json.dumps({
+        'statuses': statuses
+    }))
 
 def get_all_programs():
     program_list = []

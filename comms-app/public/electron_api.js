@@ -53,4 +53,7 @@ contextBridge.exposeInMainWorld('api', {
     setAlternateSlider: async (sliderValue) => {
         return await ipcRenderer.invoke('runCommand', {commandString: setAlternateSlider, sliderValue});
     },
+    onHotkeyPress: (handler) => {
+        ipcRenderer.on('hotkey-pressed', (event, args) => handler(args));
+    }
 });
