@@ -3,6 +3,7 @@ import { AppDiv } from './elements';
 
 import DevicePage from './components/device-page';
 import { AppStateContext } from './app-state/context';
+import { playNote } from './helpers';
 
 export default function App() {
     const {
@@ -29,6 +30,22 @@ export default function App() {
     } = useContext(AppStateContext);
     
     const [initialLoad, setInitialLoad] = useState(true);
+
+    useEffect(() => {
+        window.api.onHotkeyPress(({toDefault}) => {
+            async function playTones() {
+                if (toDefault) {
+                    await playNote(440, 150);
+                    await playNote(640, 150);
+                } else {
+                    await playNote(640, 150);
+                    await playNote(440, 150);
+                }
+            }
+
+            playTones();
+        });
+    }, []);
 
     // Fetch all the data from the electron store.
     useEffect(() => {

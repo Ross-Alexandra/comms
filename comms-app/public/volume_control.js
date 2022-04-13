@@ -12,8 +12,14 @@ async function runParameters(params) {
     return new Promise((resolve, reject) => {
         child(changeVolumeExeLoc, params, (err, data) => {
             if (err) reject(err);
-
-            resolve(JSON.parse(data.toString()));
+            
+            const dataString = data.toString().trim();
+            try {
+                resolve(JSON.parse(dataString));
+            } catch (err) {
+                console.log(`${err} caused by data: ${dataString}`);
+                resolve(err);
+            }
         });
     });
 }
